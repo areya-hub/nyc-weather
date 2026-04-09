@@ -155,6 +155,32 @@
       color: #64748b;
     }
 
+    .contact-btn {
+      display: inline-block;
+      margin-top: 14px;
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #3b82f6;
+      color: #3b82f6;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .contact-btn:hover { background: #3b82f6; color: #fff; }
+
+    .no-email {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: #475569;
+      text-align: center;
+    }
+
     .error-box {
       max-width: 480px;
       margin: 0 auto;
@@ -233,11 +259,32 @@
 
     function renderCard(b) {
       const stars = b.rating ? '★'.repeat(Math.round(b.rating)) + '☆'.repeat(5 - Math.round(b.rating)) : '';
+
+      const subject = encodeURIComponent(`Partnership Opportunity with Beside AI`);
+      const body = encodeURIComponent(
+`Hi ${b.name} team,
+
+My name is [Your Name] from Beside AI. We're building a platform that connects local service businesses like yours with new customers, and we'd love to have you join.
+
+We think ${b.name} would be a great fit. I'd love to set up a quick call to tell you more — no obligation at all.
+
+Would you be open to a 15-minute chat?
+
+Best,
+[Your Name]
+Beside AI`
+      );
+
+      const emailBtn = b.email
+        ? `<a class="contact-btn" href="mailto:${encodeURIComponent(b.email)}?subject=${subject}&body=${body}">Send Partnership Email</a>`
+        : `<div class="no-email">No email listed — try calling directly</div>`;
+
       return `
         <div class="card">
           <div class="card-name">${escapeHtml(b.name)}</div>
           ${b.phone ? `<div class="card-row"><span class="icon">📞</span>${escapeHtml(b.phone)}</div>` : ''}
           ${b.address ? `<div class="card-row"><span class="icon">📍</span>${escapeHtml(b.address)}</div>` : ''}
+          ${b.website ? `<div class="card-row"><span class="icon">🌐</span><a href="${encodeURI(b.website)}" target="_blank" style="color:#38bdf8">${escapeHtml(b.website)}</a></div>` : ''}
           ${b.rating ? `
             <div class="rating-row">
               <span class="stars">${stars}</span>
@@ -245,6 +292,7 @@
               ${b.reviewCount ? `<span class="review-count">(${escapeHtml(b.reviewCount)} reviews)</span>` : ''}
             </div>` : ''}
           ${b.categories ? `<div class="tags">${b.categories.map(c => `<span class="tag">${escapeHtml(c)}</span>`).join('')}</div>` : ''}
+          ${emailBtn}
         </div>`;
     }
 
