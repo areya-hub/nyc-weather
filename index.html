@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Business Email Finder</title>
+  <title>Local Plumber Finder</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -11,53 +11,41 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #0f172a;
       color: #f1f5f9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       min-height: 100vh;
-      padding: 24px;
+      padding: 40px 24px;
     }
 
-    .card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 16px;
-      padding: 40px 48px;
-      width: 100%;
-      max-width: 480px;
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
     }
 
-    h1 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .subtitle {
-      font-size: 0.875rem;
-      color: #64748b;
-      margin-bottom: 32px;
-    }
-
-    label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 800;
       margin-bottom: 6px;
     }
 
-    input {
-      width: 100%;
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      padding: 11px 14px;
+    .header p {
+      color: #64748b;
       font-size: 0.95rem;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 12px;
+      max-width: 480px;
+      margin: 0 auto 40px;
+    }
+
+    input {
+      flex: 1;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-size: 1rem;
       color: #f1f5f9;
-      margin-bottom: 16px;
       outline: none;
       transition: border-color 0.15s;
     }
@@ -65,220 +53,204 @@
     input:focus { border-color: #3b82f6; }
     input::placeholder { color: #475569; }
 
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
     button {
-      width: 100%;
       background: #3b82f6;
       color: #fff;
       border: none;
       border-radius: 10px;
-      padding: 13px;
+      padding: 13px 24px;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 4px;
+      white-space: nowrap;
       transition: background 0.15s, transform 0.1s;
     }
 
     button:hover { background: #2563eb; }
-    button:active { transform: scale(0.98); }
+    button:active { transform: scale(0.97); }
     button:disabled { background: #475569; cursor: not-allowed; transform: none; }
 
-    #result {
-      margin-top: 28px;
-      display: none;
-    }
-
-    .result-box {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 10px;
-      padding: 20px;
-    }
-
-    .result-label {
-      font-size: 0.75rem;
+    #status {
+      text-align: center;
       color: #64748b;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+      min-height: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+
+    .card-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #f1f5f9;
+    }
+
+    .card-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.875rem;
+      color: #94a3b8;
       margin-bottom: 6px;
     }
 
-    .result-email {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: #38bdf8;
-      word-break: break-all;
+    .card-row .icon {
+      flex-shrink: 0;
+      width: 16px;
+      color: #475569;
+      margin-top: 1px;
     }
 
-    .result-confidence {
+    .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       margin-top: 10px;
+    }
+
+    .stars {
+      color: #fbbf24;
       font-size: 0.85rem;
-      color: #94a3b8;
     }
 
-    .confidence-bar {
-      height: 4px;
-      background: #1e293b;
-      border-radius: 4px;
-      margin-top: 6px;
-      overflow: hidden;
+    .rating-num {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f1f5f9;
     }
 
-    .confidence-fill {
-      height: 100%;
-      background: #22c55e;
+    .review-count {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      background: #0f172a;
+      border: 1px solid #334155;
       border-radius: 4px;
-      transition: width 0.4s ease;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      color: #64748b;
     }
 
     .error-box {
+      max-width: 480px;
+      margin: 0 auto;
       background: #1e0a0a;
       border: 1px solid #7f1d1d;
       border-radius: 10px;
       padding: 16px 20px;
       color: #fca5a5;
       font-size: 0.9rem;
-    }
-
-    .api-note {
-      margin-top: 20px;
-      font-size: 0.78rem;
-      color: #475569;
       text-align: center;
-      line-height: 1.5;
-    }
-
-    .api-note a { color: #3b82f6; text-decoration: none; }
-    .api-note a:hover { text-decoration: underline; }
-
-    .sources {
-      margin-top: 12px;
-      font-size: 0.8rem;
-      color: #64748b;
-    }
-
-    .sources span {
-      display: inline-block;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 4px;
-      padding: 2px 8px;
-      margin: 3px 3px 0 0;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Business Email Finder</h1>
-    <p class="subtitle">Find publicly listed business email addresses</p>
-
-    <label>API Key (Hunter.io)</label>
-    <input type="password" id="apiKey" placeholder="Paste your Hunter.io API key" />
-
-    <div class="row">
-      <div>
-        <label>First Name</label>
-        <input type="text" id="firstName" placeholder="Jane" />
-      </div>
-      <div>
-        <label>Last Name</label>
-        <input type="text" id="lastName" placeholder="Smith" />
-      </div>
-    </div>
-
-    <label>Company Domain</label>
-    <input type="text" id="domain" placeholder="apple.com" />
-
-    <button id="btn" onclick="findEmail()">Find Email</button>
-
-    <div id="result"></div>
-
-    <p class="api-note">
-      Requires a free <a href="https://hunter.io/users/sign_up" target="_blank">Hunter.io account</a> (50 free searches/month).<br>
-      Only finds publicly listed business emails.
-    </p>
+  <div class="header">
+    <h1>Local Plumber Finder</h1>
+    <p>Find plumbing businesses by zip code</p>
   </div>
 
-  <script>
-    async function findEmail() {
-      const apiKey = document.getElementById("apiKey").value.trim();
-      const firstName = document.getElementById("firstName").value.trim();
-      const lastName = document.getElementById("lastName").value.trim();
-      const domain = document.getElementById("domain").value.trim().replace(/^https?:\/\//, "").replace(/\/$/, "");
-      const btn = document.getElementById("btn");
-      const resultDiv = document.getElementById("result");
+  <div class="search-row">
+    <input type="text" id="zip" placeholder="Enter zip code (e.g. 10001)" maxlength="5" />
+    <button id="btn" onclick="search()">Search</button>
+  </div>
 
-      if (!apiKey || !firstName || !lastName || !domain) {
-        showError("Please fill in all fields.");
+  <div id="status"></div>
+  <div id="results"></div>
+
+  <script>
+    document.getElementById('zip').addEventListener('keydown', e => {
+      if (e.key === 'Enter') search();
+    });
+
+    async function search() {
+      const zip = document.getElementById('zip').value.trim();
+      const btn = document.getElementById('btn');
+      const status = document.getElementById('status');
+      const results = document.getElementById('results');
+
+      if (!/^\d{5}$/.test(zip)) {
+        results.innerHTML = '<div class="error-box">Please enter a valid 5-digit zip code.</div>';
         return;
       }
 
       btn.disabled = true;
-      btn.textContent = "Searching...";
-      resultDiv.style.display = "none";
+      btn.textContent = 'Searching...';
+      status.textContent = 'Looking up plumbers in your area...';
+      results.innerHTML = '';
 
       try {
-        const url = `https://api.hunter.io/v2/email-finder?domain=${encodeURIComponent(domain)}&first_name=${encodeURIComponent(firstName)}&last_name=${encodeURIComponent(lastName)}&api_key=${encodeURIComponent(apiKey)}`;
-        const res = await fetch(url);
+        const res = await fetch(`/api/find-plumbers?zip=${zip}`);
         const data = await res.json();
 
-        if (data.errors) {
-          showError(data.errors[0]?.details || "API error. Check your API key.");
+        if (data.error) {
+          results.innerHTML = `<div class="error-box">${escapeHtml(data.error)}</div>`;
+          status.textContent = '';
           return;
         }
 
-        const { email, score, sources } = data.data;
-
-        if (!email) {
-          showError("No public business email found for this person.");
+        if (!data.businesses || data.businesses.length === 0) {
+          results.innerHTML = '<div class="error-box">No plumbers found for this zip code.</div>';
+          status.textContent = '';
           return;
         }
 
-        let sourcesHtml = "";
-        if (sources && sources.length > 0) {
-          const unique = [...new Set(sources.map(s => new URL(s.uri).hostname))].slice(0, 5);
-          sourcesHtml = `<div class="sources">Found in: ${unique.map(h => `<span>${escapeHtml(h)}</span>`).join("")}</div>`;
-        }
-
-        resultDiv.innerHTML = `
-          <div class="result-box">
-            <div class="result-label">Email Found</div>
-            <div class="result-email">${escapeHtml(email)}</div>
-            <div class="result-confidence">
-              Confidence: ${score}%
-              <div class="confidence-bar"><div class="confidence-fill" style="width:${score}%"></div></div>
-            </div>
-            ${sourcesHtml}
-          </div>`;
-        resultDiv.style.display = "block";
+        status.textContent = `Found ${data.count} plumbing businesses near ${zip}`;
+        results.innerHTML = `<div class="grid">${data.businesses.map(renderCard).join('')}</div>`;
 
       } catch (err) {
-        showError("Network error. Please try again.");
+        results.innerHTML = '<div class="error-box">Network error. Please try again.</div>';
+        status.textContent = '';
       } finally {
         btn.disabled = false;
-        btn.textContent = "Find Email";
+        btn.textContent = 'Search';
       }
     }
 
-    function showError(msg) {
-      const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = `<div class="error-box">${escapeHtml(msg)}</div>`;
-      resultDiv.style.display = "block";
+    function renderCard(b) {
+      const stars = b.rating ? '★'.repeat(Math.round(b.rating)) + '☆'.repeat(5 - Math.round(b.rating)) : '';
+      return `
+        <div class="card">
+          <div class="card-name">${escapeHtml(b.name)}</div>
+          ${b.phone ? `<div class="card-row"><span class="icon">📞</span>${escapeHtml(b.phone)}</div>` : ''}
+          ${b.address ? `<div class="card-row"><span class="icon">📍</span>${escapeHtml(b.address)}</div>` : ''}
+          ${b.rating ? `
+            <div class="rating-row">
+              <span class="stars">${stars}</span>
+              <span class="rating-num">${b.rating}</span>
+              ${b.reviewCount ? `<span class="review-count">(${escapeHtml(b.reviewCount)} reviews)</span>` : ''}
+            </div>` : ''}
+          ${b.categories ? `<div class="tags">${b.categories.map(c => `<span class="tag">${escapeHtml(c)}</span>`).join('')}</div>` : ''}
+        </div>`;
     }
 
     function escapeHtml(str) {
-      return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+      return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
     }
-
-    document.addEventListener("keydown", e => {
-      if (e.key === "Enter") findEmail();
-    });
   </script>
 </body>
 </html>
