@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NYC Temperature</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 48px 56px;
+      text-align: center;
+      max-width: 360px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #94a3b8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    #temp-display {
+      font-size: 5rem;
+      font-weight: 700;
+      line-height: 1;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    #condition {
+      font-size: 1rem;
+      color: #64748b;
+      min-height: 24px;
+      margin-bottom: 36px;
+    }
+
+    button {
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 32px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      width: 100%;
+    }
+
+    button:hover { background: #2563eb; }
+    button:active { transform: scale(0.97); }
+    button:disabled { background: #475569; cursor: not-allowed; transform: none; }
+
+    #updated {
+      font-size: 0.75rem;
+      color: #475569;
+      margin-top: 20px;
+      min-height: 18px;
+    }
+
+    .error { color: #f87171; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>New York City</h1>
+    <div id="temp-display">—</div>
+    <div id="condition"></div>
+    <button id="btn" onclick="fetchTemp()">Get Current Temperature</button>
+    <div id="updated"></div>
+  </div>
+
+  <script>
+    const WMO_CONDITIONS = {
+      0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+      45: "Fog", 48: "Icy fog",
+      51: "Light drizzle", 53: "Drizzle", 55: "Heavy drizzle",
+      61: "Light rain", 63: "Rain", 65: "Heavy rain",
+      71: "Light snow", 73: "Snow", 75: "Heavy snow", 77: "Snow grains",
+      80: "Light showers", 81: "Showers", 82: "Heavy showers",
+      85: "Snow showers", 86: "Heavy snow showers",
+      95: "Thunderstorm", 96: "Thunderstorm w/ hail", 99: "Thunderstorm w/ heavy hail"
+    };
+
+    async function fetchTemp() {
+      const btn = document.getElementById("btn");
+      const display = document.getElementById("temp-display");
+      const condition = document.getElementById("condition");
+      const updated = document.getElementById("updated");
+
+      btn.disabled = true;
+      btn.textContent = "Fetching...";
+      display.innerHTML = '<span style="color:#475569;font-size:2rem">...</span>';
+      condition.textContent = "";
+      updated.textContent = "";
+
+      try {
+        const url = "https://api.open-meteo.com/v1/forecast" +
+          "?latitude=40.7128&longitude=-74.0060" +
+          "&current=temperature_2m,weathercode" +
+          "&temperature_unit=fahrenheit" +
+          "&timezone=America%2FNew_York";
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        const temp = Math.round(data.current.temperature_2m);
+        const code = data.current.weathercode;
+        const desc = WMO_CONDITIONS[code] ?? "Unknown";
+
+        display.textContent = `${temp}°F`;
+        condition.textContent = desc;
+        updated.textContent = `Updated ${new Date().toLocaleTimeString()}`;
+      } catch (err) {
+        display.innerHTML = '<span class="error">Error</span>';
+        condition.textContent = "Could not fetch temperature.";
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Refresh";
+      }
+    }
+  </script>
+</body>
+</html>
