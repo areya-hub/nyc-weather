@@ -247,8 +247,16 @@
           return;
         }
 
-        status.textContent = `Found ${data.count} plumbing businesses near ${zip}`;
-        results.innerHTML = `<div class="grid">${data.businesses.map(renderCard).join('')}</div>`;
+        const withEmail = data.businesses.filter(b => b.email);
+
+        if (withEmail.length === 0) {
+          results.innerHTML = '<div class="error-box">No plumbers with findable email addresses in this zip code.</div>';
+          status.textContent = '';
+          return;
+        }
+
+        status.textContent = `Found ${withEmail.length} plumber${withEmail.length !== 1 ? 's' : ''} with email addresses near ${zip}`;
+        results.innerHTML = `<div class="grid">${withEmail.map(renderCard).join('')}</div>`;
 
       } catch (err) {
         results.innerHTML = '<div class="error-box">Network error. Please try again.</div>';
