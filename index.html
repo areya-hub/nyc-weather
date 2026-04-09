@@ -275,9 +275,10 @@ Best,
 Beside AI`
       );
 
+      const sourceLabel = b.emailSource === 'website' ? ' (found on website)' : b.emailSource === 'listing' ? ' (from listing)' : '';
       const emailBtn = b.email
-        ? `<a class="contact-btn" href="mailto:${encodeURIComponent(b.email)}?subject=${subject}&body=${body}">Send Partnership Email</a>`
-        : `<div class="no-email">No email listed — try calling directly</div>`;
+        ? `<a class="contact-btn" href="mailto:${encodeURIComponent(b.email)}?subject=${subject}&body=${body}">Send Partnership Email<span style="font-weight:400;opacity:0.7;font-size:0.75rem"> ${sourceLabel}</span></a>`
+        : `<div class="no-email">No email found — try calling directly</div>`;
 
       return `
         <div class="card">
