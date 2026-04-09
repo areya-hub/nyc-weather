@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "company-lookup",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["/Users/areyaaresh/Desktop/v1/company-lookup/server.py"],
+      "port": 5050
+    }
+  ]
+}

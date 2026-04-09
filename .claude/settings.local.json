@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(export PATH=\"$PATH:/Users/areyaaresh/.local/bin\")",
+      "Bash(npm --version)",
+      "Bash(npm install:*)",
+      "Bash(python3 -c \"import openpyxl; print\\(''openpyxl available''\\)\")",
+      "Bash(python3 -c \"import xlrd; print\\(''xlrd available''\\)\")",
+      "Bash(pip3 install:*)",
+      "Bash(python3:*)",
+      "Bash(vercel --yes --prod)",
+      "Bash(vercel login:*)",
+      "Bash(mkdir -p /Users/areyaaresh/Desktop/v1/company-lookup/public)",
+      "Bash(npm init:*)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "WebSearch",
+      "Bash(gh auth:*)",
+      "WebFetch(domain:areya-hub.github.io)"
+    ]
+  }
+}
