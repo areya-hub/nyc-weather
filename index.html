@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NYC Temperature</title>
+  <title>Business Email Finder</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -15,132 +15,270 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      padding: 24px;
     }
 
     .card {
       background: #1e293b;
       border: 1px solid #334155;
       border-radius: 16px;
-      padding: 48px 56px;
-      text-align: center;
-      max-width: 360px;
+      padding: 40px 48px;
       width: 100%;
+      max-width: 480px;
     }
 
     h1 {
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: #94a3b8;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 0.875rem;
+      color: #64748b;
       margin-bottom: 32px;
     }
 
-    #temp-display {
-      font-size: 5rem;
-      font-weight: 700;
-      line-height: 1;
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
     }
 
-    #condition {
-      font-size: 1rem;
-      color: #64748b;
-      min-height: 24px;
-      margin-bottom: 36px;
+    input {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 0.95rem;
+      color: #f1f5f9;
+      margin-bottom: 16px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus { border-color: #3b82f6; }
+    input::placeholder { color: #475569; }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
     button {
+      width: 100%;
       background: #3b82f6;
       color: #fff;
       border: none;
       border-radius: 10px;
-      padding: 14px 32px;
+      padding: 13px;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
+      margin-top: 4px;
       transition: background 0.15s, transform 0.1s;
-      width: 100%;
     }
 
     button:hover { background: #2563eb; }
-    button:active { transform: scale(0.97); }
+    button:active { transform: scale(0.98); }
     button:disabled { background: #475569; cursor: not-allowed; transform: none; }
 
-    #updated {
-      font-size: 0.75rem;
-      color: #475569;
-      margin-top: 20px;
-      min-height: 18px;
+    #result {
+      margin-top: 28px;
+      display: none;
     }
 
-    .error { color: #f87171; font-size: 1rem; }
+    .result-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .result-email {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #38bdf8;
+      word-break: break-all;
+    }
+
+    .result-confidence {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .confidence-bar {
+      height: 4px;
+      background: #1e293b;
+      border-radius: 4px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      background: #22c55e;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .error-box {
+      background: #1e0a0a;
+      border: 1px solid #7f1d1d;
+      border-radius: 10px;
+      padding: 16px 20px;
+      color: #fca5a5;
+      font-size: 0.9rem;
+    }
+
+    .api-note {
+      margin-top: 20px;
+      font-size: 0.78rem;
+      color: #475569;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .api-note a { color: #3b82f6; text-decoration: none; }
+    .api-note a:hover { text-decoration: underline; }
+
+    .sources {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .sources span {
+      display: inline-block;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      padding: 2px 8px;
+      margin: 3px 3px 0 0;
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>New York City</h1>
-    <div id="temp-display">—</div>
-    <div id="condition"></div>
-    <button id="btn" onclick="fetchTemp()">Get Current Temperature</button>
-    <div id="updated"></div>
+    <h1>Business Email Finder</h1>
+    <p class="subtitle">Find publicly listed business email addresses</p>
+
+    <label>API Key (Hunter.io)</label>
+    <input type="password" id="apiKey" placeholder="Paste your Hunter.io API key" />
+
+    <div class="row">
+      <div>
+        <label>First Name</label>
+        <input type="text" id="firstName" placeholder="Jane" />
+      </div>
+      <div>
+        <label>Last Name</label>
+        <input type="text" id="lastName" placeholder="Smith" />
+      </div>
+    </div>
+
+    <label>Company Domain</label>
+    <input type="text" id="domain" placeholder="apple.com" />
+
+    <button id="btn" onclick="findEmail()">Find Email</button>
+
+    <div id="result"></div>
+
+    <p class="api-note">
+      Requires a free <a href="https://hunter.io/users/sign_up" target="_blank">Hunter.io account</a> (50 free searches/month).<br>
+      Only finds publicly listed business emails.
+    </p>
   </div>
 
   <script>
-    const WMO_CONDITIONS = {
-      0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
-      45: "Fog", 48: "Icy fog",
-      51: "Light drizzle", 53: "Drizzle", 55: "Heavy drizzle",
-      61: "Light rain", 63: "Rain", 65: "Heavy rain",
-      71: "Light snow", 73: "Snow", 75: "Heavy snow", 77: "Snow grains",
-      80: "Light showers", 81: "Showers", 82: "Heavy showers",
-      85: "Snow showers", 86: "Heavy snow showers",
-      95: "Thunderstorm", 96: "Thunderstorm w/ hail", 99: "Thunderstorm w/ heavy hail"
-    };
-
-    async function fetchTemp() {
+    async function findEmail() {
+      const apiKey = document.getElementById("apiKey").value.trim();
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const domain = document.getElementById("domain").value.trim().replace(/^https?:\/\//, "").replace(/\/$/, "");
       const btn = document.getElementById("btn");
-      const display = document.getElementById("temp-display");
-      const condition = document.getElementById("condition");
-      const updated = document.getElementById("updated");
+      const resultDiv = document.getElementById("result");
+
+      if (!apiKey || !firstName || !lastName || !domain) {
+        showError("Please fill in all fields.");
+        return;
+      }
 
       btn.disabled = true;
-      btn.textContent = "Fetching...";
-      display.innerHTML = '<span style="color:#475569;font-size:2rem">...</span>';
-      condition.textContent = "";
-      updated.textContent = "";
+      btn.textContent = "Searching...";
+      resultDiv.style.display = "none";
 
       try {
-        const url = "https://api.open-meteo.com/v1/forecast" +
-          "?latitude=40.7128&longitude=-74.0060" +
-          "&current=temperature_2m,weathercode" +
-          "&temperature_unit=fahrenheit" +
-          "&timezone=America%2FNew_York";
-
+        const url = `https://api.hunter.io/v2/email-finder?domain=${encodeURIComponent(domain)}&first_name=${encodeURIComponent(firstName)}&last_name=${encodeURIComponent(lastName)}&api_key=${encodeURIComponent(apiKey)}`;
         const res = await fetch(url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
 
-        const temp = Math.round(data.current.temperature_2m);
-        const code = data.current.weathercode;
-        const desc = WMO_CONDITIONS[code] ?? "Unknown";
+        if (data.errors) {
+          showError(data.errors[0]?.details || "API error. Check your API key.");
+          return;
+        }
 
-        display.textContent = `${temp}°F`;
-        condition.textContent = desc;
-        updated.textContent = `Updated ${new Date().toLocaleTimeString()}`;
+        const { email, score, sources } = data.data;
+
+        if (!email) {
+          showError("No public business email found for this person.");
+          return;
+        }
+
+        let sourcesHtml = "";
+        if (sources && sources.length > 0) {
+          const unique = [...new Set(sources.map(s => new URL(s.uri).hostname))].slice(0, 5);
+          sourcesHtml = `<div class="sources">Found in: ${unique.map(h => `<span>${escapeHtml(h)}</span>`).join("")}</div>`;
+        }
+
+        resultDiv.innerHTML = `
+          <div class="result-box">
+            <div class="result-label">Email Found</div>
+            <div class="result-email">${escapeHtml(email)}</div>
+            <div class="result-confidence">
+              Confidence: ${score}%
+              <div class="confidence-bar"><div class="confidence-fill" style="width:${score}%"></div></div>
+            </div>
+            ${sourcesHtml}
+          </div>`;
+        resultDiv.style.display = "block";
+
       } catch (err) {
-        display.innerHTML = '<span class="error">Error</span>';
-        condition.textContent = "Could not fetch temperature.";
-        console.error(err);
+        showError("Network error. Please try again.");
       } finally {
         btn.disabled = false;
-        btn.textContent = "Refresh";
+        btn.textContent = "Find Email";
       }
     }
+
+    function showError(msg) {
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `<div class="error-box">${escapeHtml(msg)}</div>`;
+      resultDiv.style.display = "block";
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Enter") findEmail();
+    });
   </script>
 </body>
 </html>
